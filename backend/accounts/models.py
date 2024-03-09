@@ -8,6 +8,8 @@ from django.contrib.auth.models import (
 from django.dispatch import receiver
 from django.db.models.signals import post_save
 
+from address.models import Address
+
 
 class UserAccountsManager(BaseUserManager):
     """
@@ -132,20 +134,12 @@ class Staff(models.Model):
 
 class Customer(models.Model):
     """
-    A class representing a customer in the system. This class is used for customer transactions.
+    A model representing a customer in the system.
 
     Attributes:
         user (User): The user associated with the customer.
-        billing_address_1 (str): The first line of the billing address.
-        billing_address_2 (str): The second line of the billing address.
-        billing_city (str): The city of the billing address.
-        billing_state (str): The state of the billing address.
-        billing_zip (str): The ZIP code of the billing address.
-        shipping_address_1 (str): The first line of the shipping address.
-        shipping_address_2 (str): The second line of the shipping address.
-        shipping_city (str): The city of the shipping address.
-        shipping_state (str): The state of the shipping address.
-        shipping_zip (str): The ZIP code of the shipping address.
+        default_billing_address (Address): The default billing address for the customer.
+        default_shipping_address (Address): The default shipping address for the customer.
 
     Methods:
         __str__(): Returns a string representation of the customer.
@@ -153,16 +147,20 @@ class Customer(models.Model):
     """
 
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    billing_address_1 = models.CharField(max_length=255, null=True, blank=True)
-    billing_address_2 = models.CharField(max_length=255, null=True, blank=True)
-    billing_city = models.CharField(max_length=255, null=True, blank=True)
-    billing_state = models.CharField(max_length=255, null=True, blank=True)
-    billing_zip = models.CharField(max_length=255, null=True, blank=True)
-    shipping_address_1 = models.CharField(max_length=255, null=True, blank=True)
-    shipping_address_2 = models.CharField(max_length=255, null=True, blank=True)
-    shipping_city = models.CharField(max_length=255, null=True, blank=True)
-    shipping_state = models.CharField(max_length=255, null=True, blank=True)
-    shipping_zip = models.CharField(max_length=255, null=True, blank=True)
+    default_billing_address = models.ForeignKey(
+        Address,
+        related_name="billing_customers",
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+    )
+    default_shipping_address = models.ForeignKey(
+        Address,
+        related_name="shipping_customers",
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+    )
 
     def __str__(self):
         return self.user.username
