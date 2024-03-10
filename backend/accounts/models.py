@@ -75,7 +75,7 @@ class UserAccountsManager(BaseUserManager):
         return self.create_user(email, last_name, first_name, password, **extra_fields)
 
 
-class User(AbstractBaseUser):
+class User(AbstractBaseUser, PermissionsMixin):
     first_name = models.CharField(max_length=255)
     last_name = models.CharField(max_length=255)
     email = models.EmailField(unique=True, null=True)
@@ -90,7 +90,9 @@ class User(AbstractBaseUser):
     objects = UserAccountsManager()
 
     def __str__(self):
-        return self.username
+        if self.username:
+            return self.username
+        return self.email
 
 
 class Admin(models.Model):
@@ -109,7 +111,9 @@ class Admin(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
 
     def __str__(self):
-        return self.user.username
+        if self.user.username:
+            return self.user.username
+        return self.user.email
 
 
 class Staff(models.Model):
@@ -129,7 +133,9 @@ class Staff(models.Model):
     # assigned_items = models.ManyToManyField(Item)
 
     def __str__(self):
-        return self.user.username
+        if self.user.username:
+            return self.user.username
+        return self.user.email
 
 
 class Customer(models.Model):
@@ -163,7 +169,9 @@ class Customer(models.Model):
     )
 
     def __str__(self):
-        return self.user.username
+        if self.user.username:
+            return self.user.username
+        return self.user.email
 
 
 @receiver(post_save, sender=settings.AUTH_USER_MODEL)
