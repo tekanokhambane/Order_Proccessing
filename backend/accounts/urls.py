@@ -1,7 +1,6 @@
 from django.urls import path
-from .views import SessionLoginView, BasicLoginView
+from .views import SessionLoginView
 
 urlpatterns = [
-    path("login/session/", SessionLoginView.as_view(), name="session_login"),
-    path("login/basic/", BasicLoginView.as_view(), name="basic_login"),
+    path("login/", SessionLoginView.as_view(), name="session_login"),
 ]

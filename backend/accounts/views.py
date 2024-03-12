@@ -22,12 +22,3 @@ class SessionLoginView(APIView):
             return Response(
                 {"detail": "Invalid credentials."}, status=status.HTTP_401_UNAUTHORIZED
             )
-
-
-class BasicLoginView(APIView):
-    authentication_classes = [BasicAuthentication]
-    permission_classes = [IsAuthenticated]
-
-    def get(self, request, format=None):
-        # If the request reaches this point, the user is authenticated
-        return Response({"detail": "You are authenticated with Basic Auth."})
