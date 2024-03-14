@@ -1,4 +1,5 @@
 from pathlib import Path
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -89,8 +90,8 @@ DATABASES = {
         "ENGINE": "django.db.backends.mysql",
         "NAME": "orderprocess",
         "USER": "tekano",
-        "PASSWORD": "khambane325",
-        "HOST": "localhost",  # Or an IP Address that your DB is hosted on
+        "PASSWORD": "mypassword",
+        "HOST": "mysql",  # Or an IP Address that your DB is hosted on
         "PORT": "3306",
     }
 }
@@ -145,11 +146,12 @@ REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": [
         "rest_framework.authentication.BasicAuthentication",
         "rest_framework.authentication.SessionAuthentication",
-    ]
+    ],
+    "DEFAULT_PERMISSION_CLASSES": ["rest_framework.permissions.IsAuthenticated"],
 }
 
 # Redis Configuration
-REDIS_HOST = "localhost"
+REDIS_HOST = "redis"
 REDIS_PORT = 6379
 REDIS_DB = 0
 
@@ -163,3 +165,10 @@ CACHES = {
         "KEY_PREFIX": "products",
     }
 }
+
+CELERY_BROKER_URL = os.environ.get(
+    "CELERY_BROKER_URL", f"redis://{REDIS_HOST}:{REDIS_PORT}/{REDIS_DB}"
+)
+CELERY_RESULT_BACKEND = os.environ.get(
+    "CELERY_RESULT_BACKEND", f"redis://{REDIS_HOST}:{REDIS_PORT}/{REDIS_DB}"
+)

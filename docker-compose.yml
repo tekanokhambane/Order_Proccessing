@@ -1,0 +1,61 @@
+version: '3.7'
+
+services:
+
+  mysql:
+    image: mysql:latest
+    ports:
+      - 3307:3306
+    environment:
+      MYSQL_DATABASE: orderprocess
+      MYSQL_USER: tekano
+      MYSQL_PASSWORD: mypassword
+      MYSQL_ROOT_PASSWORD: myverysafepassword
+    
+
+  redis:
+    image: redis:latest
+
+  django:
+    container_name: django
+    build:
+      context: ./backend
+    command: python manage.py runserver 0.0.0.0:8001
+    ports:
+      - 8001:8001
+    volumes:
+      - ./backend:/usr/src/app/
+    environment:
+      - SECRET_KEY=django-insecure-32+vg^n#kp_*usd78pkdr)qnoj&zzzh0=a8v)&cth%5+$n-g(a
+      - DEBUG=1
+      - ALLOWED_HOSTS= localhost,127.0.0.1
+    depends_on:
+      - redis
+      - mysql
+
+  celery:
+    container_name: celery
+    build:
+      context: ./backend
+    command: celery -A backend  worker -l INFO 
+    volumes:
+      - ./backend:/usr/src/app/
+    environment:
+      - SECRET_KEY=django-insecure-32+vg^n#kp_*usd78pkdr)qnoj&zzzh0=a8v)&cth%5+$n-g(a
+      - DEBUG=1
+      - ALLOWED_HOSTS= localhost,127.0.0.1
+    depends_on:
+      - redis
+      - django
+  
+  # celery2:
+  #   container_name: celery2
+  #   build:
+  #     context: ./celeryworker
+  #     dockerfile: Dockerfile
+  #   command: celery -A celerytask worker -l INFO -Q queue2
+  #   volumes:
+  #     - ./celeryworker:/usr/src/app/
+  #   depends_on:
+  #     - redis
+  #     - django
