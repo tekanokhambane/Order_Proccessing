@@ -4,6 +4,8 @@ from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
+from django.views.decorators.cache import cache_page
+from django.utils.decorators import method_decorator
 
 
 class SessionLoginView(APIView):
@@ -21,4 +23,30 @@ class SessionLoginView(APIView):
         else:
             return Response(
                 {"detail": "Invalid credentials."}, status=status.HTTP_401_UNAUTHORIZED
+            )
+
+
+class SessionUserView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    @method_decorator(cache_page(60 * 20))
+    def get(self, request, *args, **kwargs):
+        if request.user.is_authenticated:
+            return Response(
+                {
+                    "detail": "You are already logged in.",
+                    "user": {
+                        "email": request.user.email,
+                        "username": request.user.username,
+                        "first_name": request.user.first_name,
+                        "last_name": request.user.last_name,
+                        "id": request.user.id,
+                    },
+                },
+                status=status.HTTP_200_OK,
+            )
+        else:
+            return Response(
+                {"detail": "You are not logged in."},
+                status=status.HTTP_401_UNAUTHORIZED,
             )
