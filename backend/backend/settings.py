@@ -28,8 +28,10 @@ INSTALLED_APPS = [
     "accounts",
     "address",
     "products",
+    "orders",
     "rest_framework",
     "corsheaders",
+    "adrf",
 ]
 
 MIDDLEWARE = [
