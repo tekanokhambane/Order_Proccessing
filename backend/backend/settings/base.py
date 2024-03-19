@@ -5,24 +5,11 @@ import os
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
-
-# SECURITY WARNING: keep the secret key used in production secret!
-
-
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
-
-
 os.environ["DJANGO_ALLOW_ASYNC_UNSAFE"] = "true"
 
 
 SESSION_COOKIE_SECURE = True
 SESSION_SAVE_EVERY_REQUEST = True
-os.getenv("ORDER_ITEM")
-os.environ.get("ORDER_ITEM_URL")
-# Application definition
 
 INSTALLED_APPS = [
     "django.contrib.admin",
@@ -52,7 +39,6 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
 
-CORS_ALLOW_ALL_ORIGINS = True
 
 CORS_ALLOW_METHODS = [
     "DELETE",
@@ -85,12 +71,6 @@ TEMPLATES = [
 WSGI_APPLICATION = "backend.wsgi.application"
 
 AUTH_USER_MODEL = "accounts.User"
-# Database
-# https://docs.djangoproject.com/en/4.2/ref/settings/#databases
-
-
-# Password validation
-# https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
 
 AUTH_PASSWORD_VALIDATORS = [
     {

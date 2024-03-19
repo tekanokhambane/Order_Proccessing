@@ -9,13 +9,12 @@ env = environ.FileAwareEnv()
 
 INSTALLED_APPS += ["storages"]
 
-DEBUG = False
+DEBUG = env("DEBUG", False)
 ALLOWED_HOSTS = env("ALLOWED_HOSTS", "").split(",")
 
-ALLOWED_HOSTS = []
 SECRET_KEY = env("SECRET_KEY")
 # Redis Configuration
-REDIS_HOST = "localhost"
+REDIS_HOST = env("REDIS_HOST")
 REDIS_PORT = 6379
 REDIS_DB = 0
 
@@ -32,11 +31,9 @@ CACHES = {
 
 SESSION_COOKIE_DOMAIN = env("SESSION_COOKIE_DOMAIN")
 
-CORS_ORIGIN_WHITELIST = [
-    "http://localhost:5173",  # or your React app's URL
-]
+CORS_ORIGIN_WHITELIST = env("CORS_ORIGIN_WHITELIST").split(",")
 
-AWS_REGION = "eu-west-2"
+AWS_REGION = "eu-north-1"
 
 ssm = boto3.client("ssm")
 secret_key_param = ssm.get_parameter(Name="/Prod/DjangoSecret", WithDecryption=True)
