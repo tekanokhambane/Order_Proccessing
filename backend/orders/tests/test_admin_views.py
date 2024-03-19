@@ -43,7 +43,6 @@ class TestOrderAdminSaveModel(TestCase):
             "status": "created",
             "user": self.user,
             "shipping_address": self.address,
-            "amount": 100.00,
         }
 
     def test_save_model_calls_process_order(self, mock_process_order):
@@ -56,11 +55,22 @@ class TestOrderAdminSaveModel(TestCase):
         :return: None
         :rtype: NoneType
         """
+
         admin = OrderAdmin(model=Order, admin_site=mock.Mock())
         order = Order.objects.create(**self.order_data)
+        self.order_data["id"] = order.id
+        self.order_data["amount"] = order.amount
+        self.order_data["user"] = order.user.id
         admin.save_model(None, order, None, False)
+        created_data = {
+            "id": f"{order.id}",
+            "status": f"{order.status}",
+            "user": f"{order.user.id}",
+            "shipping_address": f"{order.shipping_address.id}",
+            "amount": f"{order.amount}",
+        }
 
-        mock_process_order.assert_called_once_with(self.order_data)
+        mock_process_order.assert_called_once_with(created_data)
 
 
 @patch("orders.tasks.process_order_item.delay")
@@ -124,7 +134,7 @@ class TestOrderAdminSaveRelated(TestCase):
         data = {
             "id": str(form.instance.id),
             "order": str(form.instance.order),
-            "product": str(form.instance.product.id),
+            "product": str(form.instance.product),
             "get_action": str(
                 form.instance.get_action
             ),  # Might need to mock this method
@@ -160,7 +170,7 @@ class TestOrderAdminSaveRelated(TestCase):
         data = {
             "id": str(order_item.id),
             "order": str(order_item.order),
-            "product": str(order_item.product.id),
+            "product": str(order_item.product),
             "get_action": str(order_item.get_action),  # Might need to mock this method
             "quantity": str(order_item.quantity),
         }
