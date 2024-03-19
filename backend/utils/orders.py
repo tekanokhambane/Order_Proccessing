@@ -14,12 +14,6 @@ logging.basicConfig(level=logging.ERROR)
 logger = logging.getLogger(__name__)
 
 
-ORDER_URL = "https://hook.eu2.make.com/eqrb308y8smy0la3xs1pjpq3rksf2hae"
-
-
-ORDER_ITEM_URL = "https://hook.eu2.make.com/2w5s0ugfz52e5by5nv4nlposlo2mmubz"
-
-
 async def create_item(order_data, url, item_type="order"):
     """
     Create an item using the provided order item, URL, and type.
