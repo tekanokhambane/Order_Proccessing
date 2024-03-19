@@ -62,7 +62,7 @@
    aws cloudformation create-stack --stack-name service --template-body file://service.yaml --capabilities CAPABILITY_NAMED_IAM
 
 ## Use Lambda
-   Once the images, roles and other services are complete. Create lambda function using the image by going to the console and seleccting the container created
+   Once the images, roles and other services are complete. You can reuse the container with services like lambda function 
    ```
 
    
