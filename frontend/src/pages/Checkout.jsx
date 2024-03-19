@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom'
 
 
 
-const Checkout = ({ cartItems, setCartItems }) => {
+const Checkout = ({ cartItems, resetCart }) => {
     const navigate = useNavigate();
 
     const createOrderItem = async (order, product, qty) => {
@@ -58,7 +58,7 @@ const Checkout = ({ cartItems, setCartItems }) => {
                 console.log(error);
             }).finally(() => {
                 navigate('/')
-                setCartItems([])
+                resetCart()
             });
     };
 

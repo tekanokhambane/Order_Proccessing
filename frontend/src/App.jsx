@@ -27,6 +27,10 @@ function App() {
     })
   }, []);
 
+  const resetCart = () => {
+    listItems.current = [];
+    setCartItems([...listItems.current]);
+  }
 
   const toggleDrawer = () => {
     setDrawerOpen(!drawerOpen);
@@ -84,7 +88,7 @@ function App() {
           <NavbarItem cartItems={cartItems} toggleDrawer={toggleDrawer} />
           <Routes>
             <Route path="/" element={<Home addToCart={addToCart} />} />
-            <Route path="/checkout" element={<Checkout setCartItems={setCartItems} cartItems={cartItems} />} />
+            <Route path="/checkout" element={<Checkout resetCart={resetCart} cartItems={cartItems} />} />
             <Route path="/login" element={<Login />} />
           </Routes>
 

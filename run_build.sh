@@ -12,22 +12,16 @@ npm run build
 
 
 echo "copying..."
-rm -r ../products/static/products/
 
-mkdir ../products/static/products/
+rm -r ../backend/products/static/products
 
-cp -r dist/static/products/* ../products/static/products/
+mkdir ../backend/products/static/products/
+
+cp -r dist/static/products/* ../backend/products/static/products/
 
 cd ..
 
-# cd editor
-# npm run build
-
-# rm -r ../admin/static/editor
-# mkdir ../admin/static/editor/
-# cp -r dist/static/* ../admin/static/editor/
-
-# cd ..
+cd backend
 
 echo "collecting..."
 
