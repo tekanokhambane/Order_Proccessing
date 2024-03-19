@@ -30,7 +30,6 @@ async def create_item(order_data, url, item_type="order"):
     async with aiohttp.ClientSession() as session:
         async with session.post(url=url, json=order_data) as response:
             if response.status != 200:
-                logger.error(f"Error creating order item: {await response.text()}")
                 raise Exception(f"Error creating order item: {await response.text()}")
             try:
                 data = await response.text()
@@ -44,7 +43,6 @@ async def update_clickup_task(order_data, url):
     async with aiohttp.ClientSession() as session:
         async with session.post(url=url, json=order_data) as response:
             if response.status != 200:
-                logger.error(f"Error updating order: {await response.text()}")
                 raise Exception(f"Error updating order: {await response.text()}")
             try:
                 data = await response.text()
