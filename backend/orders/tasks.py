@@ -2,12 +2,14 @@ import os
 import asyncio
 from celery import shared_task
 from utils.orders import create_item
+import environ
+
+env = environ.Env()
+
+ORDER_URL = env("ORDER_URL")
 
 
-ORDER_URL = "https://hook.eu2.make.com/eqrb308y8smy0la3xs1pjpq3rksf2hae"
-
-
-ORDER_ITEM_URL = "https://hook.eu2.make.com/2w5s0ugfz52e5by5nv4nlposlo2mmubz"
+ORDER_ITEM_URL = env("ORDER_ITEM_URL")
 
 
 @shared_task

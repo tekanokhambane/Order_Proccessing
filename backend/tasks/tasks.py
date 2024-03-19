@@ -1,9 +1,11 @@
 import asyncio
 from celery import shared_task
 from utils.orders import update_clickup_task
+import environ
 
+env = environ.Env()
 
-TASK_URL = "https://hook.eu2.make.com/7we6jxg56j69id1043k7xf2av81f2otn"
+TASK_URL = env("TASK_URL")
 
 
 @shared_task
