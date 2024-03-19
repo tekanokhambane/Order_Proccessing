@@ -54,7 +54,6 @@ class OrderItemAPIView(APIView):
         return Response(orderitems)
 
     async def post(self, request):
-        await asyncio.sleep(2)
         serializer = OrderItemSerializer(
             data=request.data["order"], context={"request": request}
         )
