@@ -70,17 +70,6 @@ def get_secret(my_secret_name, region=AWS_REGION):
 
 db_creds = get_secret("ProdDBSecret")
 
-DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.mysql",
-        "NAME": db_creds["assigned_name"],
-        "USER": db_creds["username"],
-        "PASSWORD": db_creds["password"],
-        "HOST": db_creds["host"],
-        "PORT": env("DB_PORT"),
-    }
-}
-
 
 bucket_name_param = ssm.get_parameter(Name="/Prod/BucketName")
 STATIC_URL = "https://{0}.s3.{1}.amazonaws.com/".format(
