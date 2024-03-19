@@ -9,14 +9,19 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "django-insecure-dm2zvb=q!vh0mct^^2h6o^u8rb=xl%r3)b_8)!#6sls7ld$#e4"
+
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+
+os.environ["DJANGO_ALLOW_ASYNC_UNSAFE"] = "true"
 
 
+SESSION_COOKIE_SECURE = True
+SESSION_SAVE_EVERY_REQUEST = True
+os.getenv("ORDER_ITEM")
+os.environ.get("ORDER_ITEM_URL")
 # Application definition
 
 INSTALLED_APPS = [
@@ -30,6 +35,7 @@ INSTALLED_APPS = [
     "address",
     "products",
     "orders",
+    "tasks",
     "rest_framework",
     "corsheaders",
     "adrf",
@@ -57,9 +63,6 @@ CORS_ALLOW_METHODS = [
     "PUT",
 ]
 
-CORS_ORIGIN_WHITELIST = [
-    "http://localhost:5173",  # or your React app's URL
-]
 
 ROOT_URLCONF = "backend.urls"
 
@@ -84,17 +87,6 @@ WSGI_APPLICATION = "backend.wsgi.application"
 AUTH_USER_MODEL = "accounts.User"
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
-
-DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.mysql",
-        "NAME": "orderprocess",
-        "USER": "tekano",
-        "PASSWORD": "mypassword",
-        "HOST": "mysql",  # Or an IP Address that your DB is hosted on
-        "PORT": "3306",
-    }
-}
 
 
 # Password validation
@@ -150,25 +142,14 @@ REST_FRAMEWORK = {
     "DEFAULT_PERMISSION_CLASSES": ["rest_framework.permissions.IsAuthenticated"],
 }
 
-# Redis Configuration
-REDIS_HOST = "redis"
-REDIS_PORT = 6379
-REDIS_DB = 0
 
-CACHES = {
-    "default": {
-        "BACKEND": "django_redis.cache.RedisCache",
-        "LOCATION": f"redis://{REDIS_HOST}:{REDIS_PORT}/{REDIS_DB}",
-        "OPTIONS": {
-            "CLIENT_CLASS": "django_redis.client.DefaultClient",
-        },
-        "KEY_PREFIX": "products",
-    }
-}
+SESSION_ENGINE = "django.contrib.sessions.backends.db"
+# SESSION_CACHE_ALIAS = "default"
 
-CELERY_BROKER_URL = os.environ.get(
-    "CELERY_BROKER_URL", f"redis://{REDIS_HOST}:{REDIS_PORT}/{REDIS_DB}"
-)
-CELERY_RESULT_BACKEND = os.environ.get(
-    "CELERY_RESULT_BACKEND", f"redis://{REDIS_HOST}:{REDIS_PORT}/{REDIS_DB}"
-)
+
+# CELERY_BROKER_URL = os.environ.get(
+#     "CELERY_BROKER_URL", f"redis://{REDIS_HOST}:{REDIS_PORT}/{REDIS_DB}"
+# )
+# CELERY_RESULT_BACKEND = os.environ.get(
+#     "CELERY_RESULT_BACKEND", f"redis://{REDIS_HOST}:{REDIS_PORT}/{REDIS_DB}"
+# )

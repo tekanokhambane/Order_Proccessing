@@ -1,76 +1,85 @@
-import random
 from .models import Order, OrderItem
 from .serializers import OrderSerializer, OrderItemSerializer
 from rest_framework.response import Response
-from rest_framework.permissions import IsAuthenticated
-from rest_framework.decorators import authentication_classes, permission_classes
-from rest_framework import viewsets
+from rest_framework.permissions import IsAuthenticated, AllowAny
 
-# from adrf import viewsets
-from asgiref.sync import sync_to_async
-
-
-class AsyncPermission:
-    def has_permission(self, request, view) -> bool:
-        if random.random() < 0.7:
-            return False
-
-        return True
+# from rest_framework import viewsets
+from .tasks import process_order, process_order_item
+from adrf.views import APIView
+import asyncio
 
 
-class OrderViewSet(viewsets.ViewSet):
-    serializer_class = OrderSerializer
+class OrderAPIView(APIView):
     permission_classes = [IsAuthenticated]
-    queryset = Order.objects.all()
 
-    def list(self, request):
-        queryset = self.get_queryset()
-        serializer = OrderSerializer(queryset, many=True)
+    async def get(self, request):
+        orders = Order.objects.all()
+        serializer = OrderSerializer(orders, many=True, context={"request": request})
         return Response(serializer.data)
 
-    def create(self, request):
+    async def post(self, request):
         serializer = OrderSerializer(data=request.data, context={"request": request})
         if serializer.is_valid():
             order = serializer.save()
+            process_order.delay(OrderSerializer(order).data)
             return Response(OrderSerializer(order).data)
+        else:
+            return Response(serializer.errors, status=400)
 
-        return Response(serializer.errors, status=400)
+    async def put(self, request):
+        serializer = OrderSerializer(data=request.data, context={"request": request})
+        if serializer.is_valid():
+            order = serializer.save()
+            print(OrderSerializer(order).data)
+            # process_order.delay(OrderSerializer(order).data)
+            return Response(OrderSerializer(order).data)
+        else:
+            return Response(serializer.errors, status=400)
 
-    def retrieve(self, request, pk=None):
-        queryset = self.get_queryset()
-        order = queryset.filter(pk=pk).first()
-        if order:
-            serializer = OrderSerializer(order)
-            return Response(serializer.data)
-        return Response({"error": "Order not found"}, status=404)
-
-    def get_queryset(self):
-        return Order.objects.all()
+    async def delete(self, request):
+        serializer = OrderSerializer(data=request.data, context={"request": request})
+        if serializer.is_valid():
+            order = serializer.save()
+            # process_order.delay(OrderSerializer(order).data)
+            return Response(OrderSerializer(order).data)
+        else:
+            return Response(serializer.errors, status=400)
 
 
-class OrderItemViewSet(viewsets.ViewSet):
-    queryset = OrderItem.objects.all()
-    serializer_class = OrderItemSerializer
+class OrderItemAPIView(APIView):
+    permission_classes = [IsAuthenticated]
 
-    def list(self, request):
-        queryset = self.get_queryset()
-        serializer = OrderItemSerializer(queryset, many=True)
-        return Response(serializer.data)
+    async def get(self, request):
+        orderitems = await OrderItem.objects.all()
+        return Response(orderitems)
 
-    def create(self, request):
-        serializer = OrderItemSerializer(data=request.data["order"])
+    async def post(self, request):
+        await asyncio.sleep(2)
+        serializer = OrderItemSerializer(
+            data=request.data["order"], context={"request": request}
+        )
         if serializer.is_valid():
             order_item = serializer.save()
+            process_order_item.delay(OrderItemSerializer(order_item).data)
             return Response(OrderItemSerializer(order_item).data)
         return Response(serializer.errors, status=400)
 
-    def retrieve(self, request, pk=None):
-        queryset = self.get_queryset()
-        order_item = queryset.filter(pk=pk).first()
-        if order_item:
-            serializer = OrderItemSerializer(order_item)
-            return Response(serializer.data)
-        return Response({"error": "Order item not found"}, status=404)
+    async def put(self, request):
+        serializer = OrderItemSerializer(
+            data=request.data["order"], context={"request": request}
+        )
+        if serializer.is_valid():
+            order_item = serializer.save()
+            process_order_item.delay(OrderItemSerializer(order_item).data)
+            return Response(OrderItemSerializer(order_item).data)
+        return Response(serializer.errors, status=400)
 
-    def get_queryset(self):
-        return OrderItem.objects.all()
+    async def delete(self, request):
+        serializer = OrderItemSerializer(
+            data=request.data["order"], context={"request": request}
+        )
+        if serializer.is_valid():
+            order_item = serializer.save()
+            process_order_item.delay(OrderItemSerializer(order_item).data)
+            return Response(OrderItemSerializer(order_item).data)
+        return Response(serializer.errors, status=400)

@@ -1,4 +1,4 @@
-from rest_framework import serializers
+from adrf import serializers
 from .models import Product, ProductType
 
 

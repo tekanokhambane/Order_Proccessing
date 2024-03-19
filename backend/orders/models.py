@@ -24,7 +24,7 @@ class Order(models.Model):
         return total
 
     def __str__(self):
-        return f"Order: {self.pk}, User: {self.user} - Status: {self.status}"
+        return f"Order: {self.pk}, User: {self.user}, Amount: {self.amount}, - Status: {self.status}"
 
 
 class OrderItem(models.Model):
